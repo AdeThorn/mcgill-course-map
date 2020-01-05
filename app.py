@@ -532,9 +532,9 @@ def update_overview(subject):
         Input('submit_button', 'n_clicks'), # user clicks 'GO'
         Input('course_input', 'n_submit'),   # user presss 'Enter'
         Input('filter_list', 'value'),
-        Input('radio_items', 'value') # Bind the radio button for view modes
     ],
     [
+        State('radio_items', 'value'),  # Bind the radio button for view modes
         State('course_input', 'value'),
         # State('course_path_graph', 'elements'),
         State('filter_list', 'options')
@@ -615,4 +615,4 @@ def update_layout(cur_lay):
     return {'name':cur_lay}
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0')
