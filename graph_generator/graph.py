@@ -211,17 +211,18 @@ dfs_tree = partial(nx.dfs_tree, G=BIG_GRAPH)
 #         raise KeyError(
 #             f"There's no course called {course}.") from e
 
-def learning_path(course, search_method, show_prerequisites=False):
-    code, number = split_course_name(course)
-    try:
-        if not show_prerequisites:
-            path = search_method(source=code.lower() + '\n' + number)
-            return path
-        else:
-            return get_prerequisite_graph(code.lower() + '\n' + number)
-    except KeyError as e:
-        raise KeyError(
-            f"There's no course called {course}.") from e
+def learning_path(courses, search_method=None, show_prerequisites=False, courses_excluded=['math 139', 'math 140', 'math 141', 'math 150', 'math 222', 'math 223', 'math 240', 'comp 202']):
+    def insert_line_break_into_course_name(course_code):
+        subject, code = split_course_name(course_code)
+        return f"{subject}\n{code}"
+
+    courses_split = list(map(insert_line_break_into_course_name, courses))
+    courses_excluded_split = list(map(insert_line_break_into_course_name, courses_excluded))
+    # try:
+    return get_prerequisite_graph(courses_split, courses_excluded=list(courses_excluded_split))
+    # except KeyError as e:
+    #     raise KeyError(
+    #         f"There's no course called {courses}.") from e
 
 def big_picture(subject):
     thegraph = get_graph('overview', subject)
@@ -229,26 +230,34 @@ def big_picture(subject):
 
 def subjects_in_graph(G):
     subjects = set()
-    for node in G.nodes:
-        subjects.add(INFO_DICT[node]['subject'])
+    try:
+        for node in G.nodes:
+            subjects.add(INFO_DICT[node]['subject'])
+    except KeyError as e:
+        print(e)
     return subjects
 
 
-def get_prerequisite_graph(query_course_code):
+def get_prerequisite_graph(query_course_codes, courses_excluded=list()):
     dependency_graph = nx.DiGraph()
 
-    dependency_graph.add_node(query_course_code)
+    dependency_graph.add_nodes_from(query_course_codes)
 
     prerequisites = list()
 
     # A list of tuples in the form (course, prerequisite_of_the_course).
     prerequisites_to_visit = list()
-    for prerequisite in list(BIG_GRAPH.predecessors(query_course_code)):
-        prerequisites_to_visit.append((query_course_code, prerequisite))
+    for query_course_code in query_course_codes:
+        # print(f"Pre-processing query: {query_course_code}.")
+        for prerequisite in list(BIG_GRAPH.predecessors(query_course_code)):
+            if prerequisite not in courses_excluded:
+                # print(f"Adding first-order prerequisite: {query_course_code}.")
+                prerequisites_to_visit.append((query_course_code, prerequisite))
 
     while len(prerequisites_to_visit) > 0:
         required_course, prerequisite = prerequisites_to_visit.pop(-1)
-        if prerequisite not in prerequisites:
+        if (prerequisite not in prerequisites) and (prerequisite not in courses_excluded):
+            # print(f"Adding prerequisite: {prerequisite}.")
             prerequisites.append(prerequisite)
 
             if not dependency_graph.has_node(prerequisite):
@@ -260,6 +269,7 @@ def get_prerequisite_graph(query_course_code):
 
         # We are looking at a dependency graph, not a dependency tree.
         # Hence, we shall add the dependency edge even if the more basic course was already on the graph.
-        dependency_graph.add_edge(prerequisite, required_course)
+        if prerequisite not in courses_excluded:
+           dependency_graph.add_edge(prerequisite, required_course)
 
     return dependency_graph
