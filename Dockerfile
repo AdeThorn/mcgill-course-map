@@ -1,9 +1,21 @@
 FROM python:3
 
-RUN apt-get update
-RUN apt-get install -y python3-pip git
-RUN git clone https://github.com/jacobthebanana/mcgill-course-map.git
-WORKDIR mcgill-course-map
-RUN pip install -r requirements.txt
+MAINTAINER JacobTheBanana "jacob@banana.abay.cf"
 
-CMD ["python", "app.py"]
+RUN apt-get update -y && \
+    apt-get install -y python3-pip
+
+COPY ./requirements.txt /app/requirements.txt
+
+WORKDIR /app
+RUN pip3 install -r requirements.txt
+
+ARG CACHEBUST=1
+COPY simple_map.py /app
+ADD course_data /app/course_data
+ADD graph_generator /app/graph_generator
+
+ENTRYPOINT ["python3"]
+CMD ["simple_map.py"]
+
+EXPOSE 8000/tcp
