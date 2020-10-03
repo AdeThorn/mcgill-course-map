@@ -2,7 +2,6 @@ FROM python:3-alpine
 
 LABEL maintainer="JacobTheBanana jacob@banana.abay.cf"
 
-RUN apk add --update py3-pip
 COPY ./requirements.txt /app/requirements.txt
 
 WORKDIR /app
