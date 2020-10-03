@@ -1,14 +1,12 @@
-FROM python:3
+FROM python:3-alpine
 
-MAINTAINER JacobTheBanana "jacob@banana.abay.cf"
+LABEL maintainer="JacobTheBanana jacob@banana.abay.cf"
 
-RUN apt-get update -y && \
-    apt-get install -y python3-pip
-
+RUN apk add --update py3-pip
 COPY ./requirements.txt /app/requirements.txt
 
 WORKDIR /app
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 ARG CACHEBUST=1
 COPY simple_map.py /app
