@@ -10,6 +10,12 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Identity, TakeFirst, MapCompose
 
+
+"""
+Spyder item model. Used by course_spider.py so that CourseItemLoader can take in a request and the model and 
+output an instance of CoursespiderItem with its fields populated from a request (website)
+"""
+
 # Loader to deal with data extracted from the website
 class CourseItemLoader(ItemLoader):
     '''
@@ -34,17 +40,15 @@ class CourseItemLoader(ItemLoader):
 
     subject_in = MapCompose(lambda x: x[-4:])
 
-    
-    
 
 class CoursespiderItem(scrapy.Item):
-    '''
+    """
         name = course title
         prereq = list of prereqs
         link = link to this course
         term = which terms is this course offered; 'Not Offered' if none
         start_url = which site it is extracted from, used to store different subjects into different files
-    '''
+    """
 
     name = scrapy.Field()
     prereq = scrapy.Field()
@@ -52,8 +56,8 @@ class CoursespiderItem(scrapy.Item):
     link = scrapy.Field()
     subject = scrapy.Field()
 
-class SubjectItem(scrapy.Item):
 
+class SubjectItem(scrapy.Item):
     name = scrapy.Field()
     link = scrapy.Field()
     code = scrapy.Field()

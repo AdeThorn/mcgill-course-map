@@ -65,3 +65,6 @@ McGill is a University in Montreal and has no affiliation with this software.
 
 This software is under GNU General Public License v3.0. More info can be found in the [LICENSE](<https://github.com/Deerhound579/mcgill-course-map/blob/master/LICENSE>) file.
 
+### Scrapy
+Basically, we need a scrapy.cfg at the root directory indicating of the projects that are within 
+Run `scrapy crawl` with the default file and it will start updating the database.
