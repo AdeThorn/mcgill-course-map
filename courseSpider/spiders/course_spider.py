@@ -95,9 +95,15 @@ class CourseSpider(scrapy.Spider):
             All the dirty work is in CourseItemLoader class.
         """
 
+        # I added this so that we can parse the text itself for things like AND, OR, AND ONE OF
+        temp = CourseItemLoader(item=CoursespiderItem(), response=response)
+        temp.add_xpath('prereq', "//li[contains(p, 'Prerequisite')]//text()")
+        temp.add_xpath('coreq', "//li[contains(p, 'Corequisite(s)')]//text()")
+
         l = CourseItemLoader(item=CoursespiderItem(), response=response)
         l.add_css('name', '#page-title::text')
         l.add_xpath('prereq', "//li[contains(p, 'Prerequisite')]//a/@href")
+        l.add_xpath('coreq', "//li[contains(p, 'Corequisite(s)')]//a/@href")
         l.add_css('term', '.catalog-terms::text')
         l.add_value('link', response.url)
         l.add_value('subject', response.meta['start_url'])

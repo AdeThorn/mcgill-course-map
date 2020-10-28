@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 #TODO: Consider having something to get the current year + current_year+1 automatically so that we don't have to
 #   Update this ourselves
 url = 'https://mcgill.ca/study/2020-2021/courses/search'
-
+# url = 'https://www.mcgill.ca/study/2020-2021/courses/comp-251'
 page = requests.get(url)
 soup = BeautifulSoup(page.text, 'html.parser')
 

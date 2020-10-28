@@ -36,6 +36,9 @@ class CourseItemLoader(ItemLoader):
     prereq_in = MapCompose(lambda x: None if x is None else os.path.split(x)[1])
     prereq_out = Identity()
 
+    coreq_in = MapCompose(lambda x: None if x is None else os.path.split(x)[1])
+    coreq_out = Identity()
+
     term_in = MapCompose(lambda x: x.split(':')[1], str.strip)
 
     subject_in = MapCompose(lambda x: x[-4:])
@@ -44,7 +47,8 @@ class CourseItemLoader(ItemLoader):
 class CoursespiderItem(scrapy.Item):
     """
         name = course title
-        prereq = list of prereqs
+        prereq = list of prerequisite courses (recommended) to be taken before the course
+        coreq = list of corequisites to take alongside the course
         link = link to this course
         term = which terms is this course offered; 'Not Offered' if none
         start_url = which site it is extracted from, used to store different subjects into different files
@@ -52,6 +56,7 @@ class CoursespiderItem(scrapy.Item):
 
     name = scrapy.Field()
     prereq = scrapy.Field()
+    coreq = scrapy.Field()
     term = scrapy.Field()
     link = scrapy.Field()
     subject = scrapy.Field()
