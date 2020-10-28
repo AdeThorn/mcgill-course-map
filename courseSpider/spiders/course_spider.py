@@ -100,6 +100,10 @@ class CourseSpider(scrapy.Spider):
         temp.add_xpath('prereq', "//li[contains(p, 'Prerequisite')]//text()")
         temp.add_xpath('coreq', "//li[contains(p, 'Corequisite(s)')]//text()")
 
+        # This retrieves the actual course link.
+        # We should consider returning the course name as an actual name or something instead of the full thing.
+        # Makes processing it later easier
+        # Makes processing it later easier
         l = CourseItemLoader(item=CoursespiderItem(), response=response)
         l.add_css('name', '#page-title::text')
         l.add_xpath('prereq', "//li[contains(p, 'Prerequisite')]//a/@href")
